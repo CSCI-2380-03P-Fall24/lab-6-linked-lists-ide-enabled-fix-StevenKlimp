@@ -4,17 +4,18 @@
 	// s should be stored as the data of the node
 	// the nodes are not initially linked to any other node
 	// so be sure that the "next" Node is linked to a nullptr
-Node::Node(string s) 
-{
-
+Node::Node(string s) {
+	data = s;
+	next = nullptr;
 }
 
 //constructor : initiazlize the head and tail field from LLStack class 
 	// the stack should start with no items 
 	// the head and tail should both be initialized as null pointers
-LLStack::LLStack()
-{
-
+LLStack::LLStack() {
+	head = nullptr;
+	tail = nullptr;
+	count = 0;
 }
 
 /*
@@ -22,17 +23,17 @@ LLStack::LLStack()
 	(remember the "top" of the stack is the newest element)
 	If stack is empty, return "";
 */
-string LLStack::top()
-{
-	return "fixthis";
+string LLStack::top() {
+	if (head == nullptr)
+		return "";
+	return head->data;
 }
 
 /*
 	define the size() method, which will return the number of nodes in the stack
 */
-int LLStack::size()
-{
-	return -1;
+int LLStack::size() {
+	return count;
 }
 
 /*
@@ -43,9 +44,19 @@ int LLStack::size()
 	1. If there is no element in the stack and this is the first one going to the stack
 	2. If there is another head in the stack
 */
-void LLStack::push(string s)
-{
+void LLStack::push(string s) {
+	Node* newNode = new Node(s);
 
+	if (head == nullptr){
+		head = newNode;
+		tail =newNode;
+	}
+	else {
+		newNode->next = head;
+		head = newNode;
+	}
+
+	count++;
 }
 
 /*
@@ -55,9 +66,22 @@ void LLStack::push(string s)
 	1. If LLStack has more than one element
 	2. If LLStack has exactly one element
 */
-void LLStack::pop()
-{
+void LLStack::pop() {
+ if (head == nullptr)
+        return;
 
+    if (head == tail) {
+        delete head;
+        head = nullptr;
+        tail = nullptr;
+    }
+    else {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    count--;
 }
 
 /*
@@ -80,8 +104,44 @@ void LLStack::pop()
         * Target not found (return 0)
         * All nodes match the target (list becomes empty)
 */
-int LLStack::removeAll(const string& target) 
-{
-	return -1;
+int LLStack::removeAll(const string& target) {
+	Node* curr = head;
+    Node* prev = nullptr;
+    int removed = 0;
+
+    while (curr != nullptr) {
+        if (curr->data == target) {
+            Node* temp = curr;
+
+            if (prev == nullptr) {
+                head = curr->next;
+                curr = head;
+            }
+            else {
+                prev->next = curr->next;
+                curr = curr->next;
+            }
+
+            delete temp;
+            removed++;
+            count--;
+        }
+        else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    if (head == nullptr) {
+        tail = nullptr;
+    }
+    else {
+        Node* t = head;
+        while (t->next != nullptr)
+            t = t->next;
+        tail = t;
+    }
+
+    return removed;
 }
 
